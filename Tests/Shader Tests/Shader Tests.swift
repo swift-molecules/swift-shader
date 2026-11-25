@@ -7,11 +7,16 @@ extension `Shader Tests` {
     struct Sum: Shader.Kernel {
         let from: Shader.Buffer<SIMD4<Float16>>
         let keys: Shader.Buffer<SIMD2<UInt64>>
-        let columns: Int32
         let to: Shader.Buffer<SIMD4<Float>>
 
+        init(_ arguments: Shader.Arguments) {
+            from = arguments[0]
+            keys = arguments[1]
+            to = arguments[2]
+        }
+
         func run(at place: Shader.Place) {
-            let index = Int32(place.row) * columns + Int32(place.column)
+            let index = Int32(place.row) * 3 + Int32(place.column)
             to[index] = SIMD4<Float>(from[index]) + SIMD4(repeating: Float(keys[0].y))
         }
     }
@@ -26,7 +31,7 @@ extension `Shader Tests` {
             from.withUnsafeMutableBytes { from in
                 keys.withUnsafeMutableBytes { keys in
                     to.withUnsafeMutableBytes { to in
-                        unsafe Sum(from: .init(from.baseAddress!), keys: .init(keys.baseAddress!), columns: 3, to: .init(to.baseAddress!))
+                        unsafe Sum(.init([from.baseAddress!, keys.baseAddress!, to.baseAddress!]))
                             .run(over: .init(columns: 3, rows: 2))
                     }
                 }

@@ -1,6 +1,9 @@
 extension Shader {
     /// Code that runs at every place of a grid.
     public protocol Kernel {
+        /// The kernel over the memory it is handed.
+        init(_ arguments: Shader.Arguments)
+
         /// What happens at a place.
         func run(at place: Shader.Place)
     }
