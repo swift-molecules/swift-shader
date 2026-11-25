@@ -1,0 +1,10 @@
+description: "A shader as Swift: a kernel run at every place of a grid over buffers, on the CPU as it stands and on a GPU through a compiler."
+topics:
+  - molecules
+  - shader
+  - gpu
+  - kernel
+homepage: "https://swift-institute.org"
+readme:
+  family: E
+embedded-target: Shader
