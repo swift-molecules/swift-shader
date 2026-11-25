@@ -90,6 +90,21 @@
     @usableFromInline
     internal func storeWide(_ buffer: Int32, _ offset: Int32, _ words: UInt64)
 
+    @_extern(wasm, module: "shader", name: "local")
+    @_extern(c, "shader_local")
+    @usableFromInline
+    internal func local(_ number: Int32, _ count: Int32)
+
+    @_extern(wasm, module: "shader", name: "local_load")
+    @_extern(c, "shader_local_load")
+    @usableFromInline
+    internal func localLoad(_ number: Int32, _ index: Int32) -> UInt32
+
+    @_extern(wasm, module: "shader", name: "local_store")
+    @_extern(c, "shader_local_store")
+    @usableFromInline
+    internal func localStore(_ number: Int32, _ index: Int32, _ word: UInt32)
+
     extension Shader {
         /// Gives a vector from a function entry.
         @inlinable
