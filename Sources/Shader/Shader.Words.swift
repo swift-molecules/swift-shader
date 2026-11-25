@@ -31,14 +31,14 @@ extension Shader.Words {
     public subscript(offset: Int32) -> UInt32 {
         get {
             #if SHADER
-                Shader.load(index, offset)
+                load(index, offset)
             #else
                 UInt32(littleEndian: unsafe base.loadUnaligned(fromByteOffset: Int(offset), as: UInt32.self))
             #endif
         }
         nonmutating set {
             #if SHADER
-                Shader.store(index, offset, newValue)
+                store(index, offset, newValue)
             #else
                 unsafe base.storeBytes(of: newValue.littleEndian, toByteOffset: Int(offset), as: UInt32.self)
             #endif
