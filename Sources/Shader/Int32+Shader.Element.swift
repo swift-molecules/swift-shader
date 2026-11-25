@@ -1,4 +1,4 @@
-extension Int32: Shader.Element {
+extension Int32: Shader.Element, Shader.Component {
     @inlinable
     @inline(__always)
     public static var stride: Int32 { 4 }

@@ -1,7 +1,7 @@
 extension Shader {
     /// A value a buffer holds.
     public protocol Element {
-        /// How many bytes apart elements lie: a multiple of 4.
+        /// How many bytes apart elements lie: a multiple of 4, or 1.
         static var stride: Int32 { get }
 
         /// The value at a byte offset.

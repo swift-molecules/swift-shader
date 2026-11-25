@@ -1,36 +1,72 @@
 extension Shader {
-    /// A number a buffer holds vectors of four of.
+    /// A number a buffer holds vectors of.
     public protocol Component {
-        /// How many bytes apart vectors lie.
-        static var span: Int32 { get }
+        /// How many bytes a component takes.
+        static var width: Int32 { get }
 
-        /// A component of the vector at a byte offset.
-        init(_ words: Shader.Words, at offset: Int32, component: Int32)
+        /// Two components at a byte offset that is a multiple of 4.
+        static func pair(_ words: Shader.Words, at offset: Int32) -> (x: Self, y: Self)
 
-        /// Puts a vector's four components at a byte offset.
-        static func write(_ x: Self, _ y: Self, _ z: Self, _ w: Self, to words: Shader.Words, at offset: Int32)
+        /// Puts two components at a byte offset that is a multiple of 4.
+        static func put(_ x: Self, _ y: Self, to words: Shader.Words, at offset: Int32)
+    }
+}
+
+extension Shader.Component where Self: Shader.Element {
+    @inlinable
+    @inline(__always)
+    public static var width: Int32 { stride }
+
+    @inlinable
+    @inline(__always)
+    public static func pair(_ words: Shader.Words, at offset: Int32) -> (x: Self, y: Self) {
+        (Self(words, at: offset), Self(words, at: offset &+ stride))
+    }
+
+    @inlinable
+    @inline(__always)
+    public static func put(_ x: Self, _ y: Self, to words: Shader.Words, at offset: Int32) {
+        x.write(to: words, at: offset)
+        y.write(to: words, at: offset &+ stride)
+    }
+}
+
+extension SIMD2: Shader.Element where Scalar: Shader.Component {
+    @inlinable
+    @inline(__always)
+    public static var stride: Int32 { 2 &* Scalar.width }
+
+    @inlinable
+    @inline(__always)
+    public init(_ words: Shader.Words, at offset: Int32) {
+        let pair = Scalar.pair(words, at: offset)
+        self.init(pair.x, pair.y)
+    }
+
+    @inlinable
+    @inline(__always)
+    public func write(to words: Shader.Words, at offset: Int32) {
+        Scalar.put(x, y, to: words, at: offset)
     }
 }
 
 extension SIMD4: Shader.Element where Scalar: Shader.Component {
     @inlinable
     @inline(__always)
-    public static var stride: Int32 { Scalar.span }
+    public static var stride: Int32 { 4 &* Scalar.width }
 
     @inlinable
     @inline(__always)
     public init(_ words: Shader.Words, at offset: Int32) {
-        self.init(
-            Scalar(words, at: offset, component: 0),
-            Scalar(words, at: offset, component: 1),
-            Scalar(words, at: offset, component: 2),
-            Scalar(words, at: offset, component: 3)
-        )
+        let low = Scalar.pair(words, at: offset)
+        let high = Scalar.pair(words, at: offset &+ 2 &* Scalar.width)
+        self.init(low.x, low.y, high.x, high.y)
     }
 
     @inlinable
     @inline(__always)
     public func write(to words: Shader.Words, at offset: Int32) {
-        Scalar.write(x, y, z, w, to: words, at: offset)
+        Scalar.put(x, y, to: words, at: offset)
+        Scalar.put(z, w, to: words, at: offset &+ 2 &* Scalar.width)
     }
 }

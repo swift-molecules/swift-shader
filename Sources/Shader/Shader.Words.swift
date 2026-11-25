@@ -45,3 +45,25 @@ extension Shader.Words {
         }
     }
 }
+
+extension Shader.Words {
+    /// The byte at an offset.
+    @inlinable
+    @inline(__always)
+    public subscript(byte offset: Int32) -> UInt8 {
+        get {
+            #if SHADER
+                UInt8(truncatingIfNeeded: loadByte(index, offset))
+            #else
+                unsafe base.load(fromByteOffset: Int(offset), as: UInt8.self)
+            #endif
+        }
+        nonmutating set {
+            #if SHADER
+                storeByte(index, offset, UInt32(newValue))
+            #else
+                unsafe base.storeBytes(of: newValue, toByteOffset: Int(offset), as: UInt8.self)
+            #endif
+        }
+    }
+}

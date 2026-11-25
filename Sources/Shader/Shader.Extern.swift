@@ -15,6 +15,71 @@
     @usableFromInline
     internal func result(_ index: Int32, _ component: Float)
 
+    @_extern(wasm, module: "shader", name: "load_byte")
+    @_extern(c, "shader_load_byte")
+    @usableFromInline
+    internal func loadByte(_ buffer: Int32, _ offset: Int32) -> UInt32
+
+    @_extern(wasm, module: "shader", name: "store_byte")
+    @_extern(c, "shader_store_byte")
+    @usableFromInline
+    internal func storeByte(_ buffer: Int32, _ offset: Int32, _ byte: UInt32)
+
+    @_extern(wasm, module: "shader", name: "lane")
+    @_extern(c, "shader_lane")
+    @usableFromInline
+    internal func lane() -> Int32
+
+    @_extern(wasm, module: "shader", name: "lanes")
+    @_extern(c, "shader_lanes")
+    @usableFromInline
+    internal func lanes() -> Int32
+
+    @_extern(wasm, module: "shader", name: "barrier")
+    @_extern(c, "shader_barrier")
+    @usableFromInline
+    internal func barrier()
+
+    @_extern(wasm, module: "shader", name: "prefix")
+    @_extern(c, "shader_prefix")
+    @usableFromInline
+    internal func prefix(_ number: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "final")
+    @_extern(c, "shader_final")
+    @usableFromInline
+    internal func final(_ number: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "surface")
+    @_extern(c, "shader_surface")
+    @usableFromInline
+    internal func surface(_ red: Float, _ green: Float, _ blue: Float, _ alpha: Float, _ column: UInt32, _ row: UInt32)
+
+    @_extern(wasm, module: "shader", name: "exp")
+    @_extern(c, "shader_exp")
+    @usableFromInline
+    internal func mathExp(_ x: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "sin")
+    @_extern(c, "shader_sin")
+    @usableFromInline
+    internal func mathSin(_ x: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "cos")
+    @_extern(c, "shader_cos")
+    @usableFromInline
+    internal func mathCos(_ x: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "atan2")
+    @_extern(c, "shader_atan2")
+    @usableFromInline
+    internal func mathAtan2(_ y: Float, _ x: Float) -> Float
+
+    @_extern(wasm, module: "shader", name: "pow")
+    @_extern(c, "shader_pow")
+    @usableFromInline
+    internal func mathPow(_ x: Float, _ y: Float) -> Float
+
     extension Shader {
         /// Gives a vector from a function entry.
         @inlinable
