@@ -67,3 +67,25 @@ extension Shader.Words {
         }
     }
 }
+
+extension Shader.Words {
+    /// The two words at a byte offset that is a multiple of 8, the first one lowest.
+    @inlinable
+    @inline(__always)
+    public subscript(wide offset: Int32) -> UInt64 {
+        get {
+            #if SHADER
+                loadWide(index, offset)
+            #else
+                UInt64(littleEndian: unsafe base.loadUnaligned(fromByteOffset: Int(offset), as: UInt64.self))
+            #endif
+        }
+        nonmutating set {
+            #if SHADER
+                storeWide(index, offset, newValue)
+            #else
+                unsafe base.storeBytes(of: newValue.littleEndian, toByteOffset: Int(offset), as: UInt64.self)
+            #endif
+        }
+    }
+}

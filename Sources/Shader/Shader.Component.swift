@@ -9,6 +9,12 @@ extension Shader {
 
         /// Puts two components at a byte offset that is a multiple of 4.
         static func put(_ x: Self, _ y: Self, to words: Shader.Words, at offset: Int32)
+
+        /// Four components at a byte offset that is a multiple of 8.
+        static func quad(_ words: Shader.Words, at offset: Int32) -> (x: Self, y: Self, z: Self, w: Self)
+
+        /// Puts four components at a byte offset that is a multiple of 8.
+        static func put(_ x: Self, _ y: Self, _ z: Self, _ w: Self, to words: Shader.Words, at offset: Int32)
     }
 }
 
@@ -28,6 +34,23 @@ extension Shader.Component where Self: Shader.Element {
     public static func put(_ x: Self, _ y: Self, to words: Shader.Words, at offset: Int32) {
         x.write(to: words, at: offset)
         y.write(to: words, at: offset &+ stride)
+    }
+}
+
+extension Shader.Component {
+    @inlinable
+    @inline(__always)
+    public static func quad(_ words: Shader.Words, at offset: Int32) -> (x: Self, y: Self, z: Self, w: Self) {
+        let low = pair(words, at: offset)
+        let high = pair(words, at: offset &+ 2 &* width)
+        return (low.x, low.y, high.x, high.y)
+    }
+
+    @inlinable
+    @inline(__always)
+    public static func put(_ x: Self, _ y: Self, _ z: Self, _ w: Self, to words: Shader.Words, at offset: Int32) {
+        put(x, y, to: words, at: offset)
+        put(z, w, to: words, at: offset &+ 2 &* width)
     }
 }
 
@@ -58,15 +81,13 @@ extension SIMD4: Shader.Element where Scalar: Shader.Component {
     @inlinable
     @inline(__always)
     public init(_ words: Shader.Words, at offset: Int32) {
-        let low = Scalar.pair(words, at: offset)
-        let high = Scalar.pair(words, at: offset &+ 2 &* Scalar.width)
-        self.init(low.x, low.y, high.x, high.y)
+        let quad = Scalar.quad(words, at: offset)
+        self.init(quad.x, quad.y, quad.z, quad.w)
     }
 
     @inlinable
     @inline(__always)
     public func write(to words: Shader.Words, at offset: Int32) {
-        Scalar.put(x, y, to: words, at: offset)
-        Scalar.put(z, w, to: words, at: offset &+ 2 &* Scalar.width)
+        Scalar.put(x, y, z, w, to: words, at: offset)
     }
 }

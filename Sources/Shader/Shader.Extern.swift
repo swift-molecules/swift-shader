@@ -80,6 +80,16 @@
     @usableFromInline
     internal func mathPow(_ x: Float, _ y: Float) -> Float
 
+    @_extern(wasm, module: "shader", name: "load_wide")
+    @_extern(c, "shader_load_wide")
+    @usableFromInline
+    internal func loadWide(_ buffer: Int32, _ offset: Int32) -> UInt64
+
+    @_extern(wasm, module: "shader", name: "store_wide")
+    @_extern(c, "shader_store_wide")
+    @usableFromInline
+    internal func storeWide(_ buffer: Int32, _ offset: Int32, _ words: UInt64)
+
     extension Shader {
         /// Gives a vector from a function entry.
         @inlinable
