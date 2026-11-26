@@ -4,7 +4,10 @@ import PackageDescription
 let package = Package(
     name: "swift-shader",
     platforms: [.macOS(.v27), .iOS(.v27), .tvOS(.v27), .watchOS(.v27), .visionOS(.v27)],
-    products: [.library(name: "Shader", targets: ["Shader"])],
+    products: [
+        .library(name: "Shader", targets: ["Shader"]),
+        .library(name: "Shader Metal", targets: ["Shader Metal"]),
+    ],
     dependencies: [.package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main")],
     targets: [
         .target(
@@ -13,10 +16,23 @@ let package = Package(
                 .product(name: "Numeric", package: "swift-numeric")
             ]
         ),
+        .target(
+            name: "Shader Metal",
+            dependencies: [
+                .target(name: "Shader")
+            ]
+        ),
         .testTarget(
             name: "Shader Tests",
             dependencies: [
                 .target(name: "Shader")
+            ]
+        ),
+        .testTarget(
+            name: "Shader Metal Tests",
+            dependencies: [
+                .target(name: "Shader"),
+                .target(name: "Shader Metal"),
             ]
         ),
     ],
