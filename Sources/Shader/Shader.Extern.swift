@@ -55,30 +55,10 @@
     @usableFromInline
     internal func surface(_ red: Float, _ green: Float, _ blue: Float, _ alpha: Float, _ column: UInt32, _ row: UInt32)
 
-    @_extern(wasm, module: "shader", name: "exp")
-    @_extern(c, "shader_exp")
-    @usableFromInline
-    internal func mathExp(_ x: Float) -> Float
 
-    @_extern(wasm, module: "shader", name: "sin")
-    @_extern(c, "shader_sin")
-    @usableFromInline
-    internal func mathSin(_ x: Float) -> Float
 
-    @_extern(wasm, module: "shader", name: "cos")
-    @_extern(c, "shader_cos")
-    @usableFromInline
-    internal func mathCos(_ x: Float) -> Float
 
-    @_extern(wasm, module: "shader", name: "atan2")
-    @_extern(c, "shader_atan2")
-    @usableFromInline
-    internal func mathAtan2(_ y: Float, _ x: Float) -> Float
 
-    @_extern(wasm, module: "shader", name: "pow")
-    @_extern(c, "shader_pow")
-    @usableFromInline
-    internal func mathPow(_ x: Float, _ y: Float) -> Float
 
     @_extern(wasm, module: "shader", name: "load_wide")
     @_extern(c, "shader_load_wide")
