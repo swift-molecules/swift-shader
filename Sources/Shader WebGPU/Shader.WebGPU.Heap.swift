@@ -61,3 +61,14 @@ extension Shader.WebGPU {
         #endif
     }
 }
+
+extension Shader.WebGPU {
+    /// Draws encoded pixels that lie on the heap into the page's canvas, for the frame the page is in, after every
+    /// command sent before: `columns` by `rows` pixels from a place, a word each, with blue in its lowest byte,
+    /// then green, red and alpha, the colours already multiplied by the alpha where the canvas is not opaque.
+    public static func show(at place: UInt32, columns: Int, rows: Int) {
+        #if os(WASI)
+            shaderWebGPUShow(Int32(bitPattern: place), Int32(clamping: columns), Int32(clamping: rows))
+        #endif
+    }
+}
