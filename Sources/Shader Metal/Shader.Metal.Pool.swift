@@ -1,6 +1,7 @@
 #if canImport(Metal)
     public import Shader
     public import Metal
+    public import Cardinal
 
     extension Shader.Metal {
         /// Buffers a renderer has finished with, kept for the next pass or frame that asks for one they fit, so a
@@ -14,8 +15,8 @@
             /// How many buffers were ever given.
             var given: UInt64 = 0
 
-            public init(bound: Int = 1 << 31) {
-                self.bound = bound
+            public init(bound: Cardinal = 2_147_483_648) {
+                self.bound = Int(bitPattern: bound)
             }
         }
     }
@@ -23,23 +24,24 @@
     extension Shader.Metal.Pool {
         /// The size a buffer of some bytes is made at: a power of two up to a mebibyte, and whole mebibytes above,
         /// so buffers of nearly one size are one size.
-        public static func size(_ length: Int) -> Int {
-            let length = Swift.max(length, 256)
-            guard length > 1 << 20 else { return 1 << (Int.bitWidth - (length - 1).leadingZeroBitCount) }
-            return (length + (1 << 20) - 1) & ~((1 << 20) - 1)
+        public static func size(_ length: Cardinal) -> Cardinal {
+            let length = Swift.max(Int(bitPattern: length), 256)
+            guard length > 1 << 20 else { return Cardinal(UInt(1 << (Int.bitWidth - (length - 1).leadingZeroBitCount))) }
+            return Cardinal(UInt((length + (1 << 20) - 1) & ~((1 << 20) - 1)))
         }
 
         /// The size among `sizes` a buffer of `size` is taken from: the smallest that holds it, and no more than
         /// twice its size, so that little of a buffer lies unused.
-        public static func fitting(_ size: Int, among sizes: some Swift.Sequence<Int>) -> Int? {
-            var best: Int?
-            for other in sizes where other >= size && other <= 2 * size && other < best ?? .max { best = other }
+        public static func fitting(_ size: Cardinal, among sizes: some Swift.Sequence<Cardinal>) -> Cardinal? {
+            var best: Cardinal?
+            for other in sizes where other >= size && other <= size + size && other < best ?? .max { best = other }
             return best
         }
 
         /// A kept buffer that holds a size, if there is one, handed over to the one who takes it.
-        public mutating func take(_ size: Int) -> Sheet? {
-            guard let size = buffers[size] == nil ? Self.fitting(size, among: buffers.keys) : size,
+        public mutating func take(_ size: Cardinal) -> Sheet? {
+            let asked = Int(bitPattern: size)
+            guard let size = buffers[asked] == nil ? Self.fitting(size, among: buffers.keys.lazy.map { Cardinal(UInt($0)) }).map({ Int(bitPattern: $0) }) : asked,
                 let held = buffers[size]?.popLast()
             else { return nil }
             if buffers[size]?.isEmpty == true { buffers[size] = nil }

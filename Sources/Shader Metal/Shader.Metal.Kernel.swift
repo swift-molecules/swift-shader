@@ -1,6 +1,7 @@
 #if canImport(Metal)
     public import Shader
     public import Metal
+    public import Cardinal
 
     extension Shader.Metal {
         /// One compiled kernel, by the name its text gives it.
@@ -21,12 +22,14 @@
         /// wide and a grid of rows is drawn in squares of 16.
         public func dispatch(
             on encoder: any MTLComputeCommandEncoder,
-            barrier: Bool,
-            width: Int,
-            height: Int,
+            barrier: Shader.Metal.Kernel.Barrier,
+            width: Cardinal,
+            height: Cardinal,
             group: (width: Int, height: Int)? = nil,
             _ bind: (any MTLComputeCommandEncoder) -> Void
         ) {
+            let width = Int(bitPattern: width)
+            let height = Int(bitPattern: height)
             guard width > 0, height > 0 else { return }
             encoder.label = name
             encoder.setComputePipelineState(pipeline)
@@ -34,7 +37,7 @@
             let wide = group?.width ?? (height == 1 ? Swift.min(pipeline.maxTotalThreadsPerThreadgroup, 256) : 16)
             let tall = group?.height ?? (height == 1 ? 1 : Swift.max(1, Swift.min(16, pipeline.maxTotalThreadsPerThreadgroup / 16)))
             encoder.dispatchThreads(MTLSize(width: width, height: height, depth: 1), threadsPerThreadgroup: MTLSize(width: wide, height: tall, depth: 1))
-            if barrier { encoder.memoryBarrier(scope: [.buffers, .textures]) }
+            if barrier == .after { encoder.memoryBarrier(scope: [.buffers, .textures]) }
         }
     }
 #endif

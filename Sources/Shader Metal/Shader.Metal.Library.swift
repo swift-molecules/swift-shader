@@ -1,6 +1,7 @@
 #if canImport(Metal)
     public import Shader
     public import Metal
+    public import Cardinal
 
     extension Shader.Metal {
         /// The machine's GPU, `lanes` queues on it, and kernels compiled from Metal text with Metal's normal maths:
@@ -12,9 +13,9 @@
 
             /// The kernels named in `names` compiled from `source`, or nil where the machine has no GPU, the text
             /// does not compile, or a named kernel is missing.
-            public init?(source: Swift.String, names: [Swift.String], lanes: Int = 8) {
+            public init?(source: Swift.String, names: [Swift.String], lanes: Cardinal = 8) {
                 guard let device = MTLCreateSystemDefaultDevice() else { return nil }
-                let queues = (0..<Swift.max(lanes, 1)).compactMap { _ in device.makeCommandQueue() }
+                let queues = (0..<Swift.max(Int(bitPattern: lanes), 1)).compactMap { _ in device.makeCommandQueue() }
                 guard !queues.isEmpty else { return nil }
                 let options = MTLCompileOptions()
                 options.mathMode = .relaxed

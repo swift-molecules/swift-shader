@@ -1,5 +1,6 @@
 #if canImport(Metal)
     import Shader
+    import Cardinal
     import Metal
     @testable import Shader_Metal
     import Testing
@@ -12,8 +13,8 @@
             @Test func `a buffer is made at a power of two up to a mebibyte and in whole mebibytes above`() {
                 #expect(Shader.Metal.Pool.size(1) == 256)
                 #expect(Shader.Metal.Pool.size(257) == 512)
-                #expect(Shader.Metal.Pool.size(1 << 20) == 1 << 20)
-                #expect(Shader.Metal.Pool.size((1 << 20) + 1) == 2 << 20)
+                #expect(Shader.Metal.Pool.size(1_048_576) == 1_048_576)
+                #expect(Shader.Metal.Pool.size(1_048_577) == 2_097_152)
             }
 
             @Test func `a kept buffer is taken for a size it holds at no more than twice its size`() {
@@ -23,7 +24,7 @@
 
             @Test func `a full pool lets go of what was given longest ago`() throws {
                 let device = try #require(MTLCreateSystemDefaultDevice())
-                var pool = Shader.Metal.Pool(bound: 3 << 20)
+                var pool = Shader.Metal.Pool(bound: 3_145_728)
                 for mebibytes in [1, 2, 1] {
                     let buffer = try #require(device.makeBuffer(length: mebibytes << 20, options: .storageModeShared))
                     pool.give(Shader.Metal.Pool.Sheet(buffer: buffer))

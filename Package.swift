@@ -9,7 +9,10 @@ let package = Package(
         .library(name: "Shader Metal", targets: ["Shader Metal"]),
         .library(name: "Shader WebGPU", targets: ["Shader WebGPU"]),
     ],
-    dependencies: [.package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main")],
+    dependencies: [
+        .package(url: "https://github.com/swift-atoms/swift-cardinal.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main"),
+    ],
     targets: [
         .target(
             name: "Shader",
@@ -21,7 +24,8 @@ let package = Package(
         .target(
             name: "Shader Metal",
             dependencies: [
-                .target(name: "Shader")
+                .target(name: "Shader"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
             ]
         ),
         .target(
@@ -42,6 +46,7 @@ let package = Package(
             dependencies: [
                 .target(name: "Shader"),
                 .target(name: "Shader Metal"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
             ]
         ),
     ],
