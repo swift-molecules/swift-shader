@@ -61,7 +61,7 @@ extension Shader.WebGPU {
           const pipelines = [];
           const stages = [];
           const textures = [];
-          const formats = ["rgba16float", "r16float", "rgba8unorm"];
+          const formats = ["rgba16float", "r16float", "rgba8unorm", "rg16float"];
           const operations = ["add", "subtract", "reverse-subtract", "min", "max"];
           const factors = ["zero", "one", "src", "one-minus-src", "src-alpha", "one-minus-src-alpha", "dst", "one-minus-dst", "dst-alpha", "one-minus-dst-alpha"];
           const between = device.createSampler({ magFilter: "linear", minFilter: "linear", addressModeU: "clamp-to-edge", addressModeV: "clamp-to-edge" });

@@ -22,6 +22,8 @@ extension Shader.WebGPU.Texture {
         case r16float = 1
         /// Four bytes, each a share of one.
         case rgba8unorm = 2
+        /// Two half floats, read as red and green.
+        case rg16float = 3
     }
 
     /// A texture of so many columns and rows, made by the page.
