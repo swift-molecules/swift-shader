@@ -78,4 +78,49 @@
     @_extern(c, "shader_local_store")
     @usableFromInline
     internal func localStore(_ number: Int32, _ index: Int32, _ word: UInt32)
+
+    @_extern(wasm, module: "shader", name: "texture_load")
+    @_extern(c, "shader_texture_load")
+    @usableFromInline
+    internal func textureLoad(_ texture: Int32, _ column: UInt32, _ row: UInt32)
+
+    @_extern(wasm, module: "shader", name: "texture_sample")
+    @_extern(c, "shader_texture_sample")
+    @usableFromInline
+    internal func textureSample(_ texture: Int32, _ x: Float, _ y: Float)
+
+    @_extern(wasm, module: "shader", name: "texel")
+    @_extern(c, "shader_texel")
+    @usableFromInline
+    internal func texel(_ component: Int32) -> Float
+
+    @_extern(wasm, module: "shader", name: "texture_store")
+    @_extern(c, "shader_texture_store")
+    @usableFromInline
+    internal func textureStore(_ texture: Int32, _ red: Float, _ green: Float, _ blue: Float, _ alpha: Float, _ column: UInt32, _ row: UInt32)
+
+    @_extern(wasm, module: "shader", name: "position")
+    @_extern(c, "shader_position")
+    @usableFromInline
+    internal func position(_ x: Float, _ y: Float, _ z: Float, _ w: Float)
+
+    @_extern(wasm, module: "shader", name: "vary")
+    @_extern(c, "shader_vary")
+    @usableFromInline
+    internal func vary(_ place: Int32, _ x: Float, _ y: Float, _ z: Float, _ w: Float)
+
+    @_extern(wasm, module: "shader", name: "vary_flat")
+    @_extern(c, "shader_vary_flat")
+    @usableFromInline
+    internal func varyFlat(_ place: Int32, _ x: UInt32, _ y: UInt32, _ z: UInt32, _ w: UInt32)
+
+    @_extern(wasm, module: "shader", name: "varying")
+    @_extern(c, "shader_varying")
+    @usableFromInline
+    internal func varying(_ place: Int32, _ component: Int32) -> Float
+
+    @_extern(wasm, module: "shader", name: "varying_flat")
+    @_extern(c, "shader_varying_flat")
+    @usableFromInline
+    internal func varyingFlat(_ place: Int32, _ component: Int32) -> UInt32
 #endif

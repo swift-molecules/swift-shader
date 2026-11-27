@@ -28,14 +28,17 @@ extension Shader.WebGPU.Kernel {
     }
 
     /// Runs the kernel at every place of a grid of `columns` by `rows`, after every dispatch before it, its
-    /// buffers at the places of `heap`, in words, that `bases` gives by number.
-    public func dispatch(columns: Int, rows: Int, bases: [UInt32]) {
+    /// buffers at the places of `heap`, in words, that `bases` gives by number, and its textures by number.
+    public func dispatch(columns: Int, rows: Int, bases: [UInt32], textures: [Shader.WebGPU.Texture?] = []) {
         guard columns > 0, rows > 0 else { return }
         var all = [UInt32](repeating: 0, count: 32)
         for (number, base) in bases.prefix(32).enumerated() { all[number] = base }
         #if os(WASI)
+            let handles = Shader.WebGPU.handles(textures)
             all.withUnsafeBufferPointer { words in
-                unsafe shaderWebGPUDispatch(handle, Int32(clamping: columns), Int32(clamping: rows), words.baseAddress!)
+                handles.withUnsafeBufferPointer { handles in
+                    unsafe shaderWebGPUDispatch(handle, Int32(clamping: columns), Int32(clamping: rows), words.baseAddress!, handles.baseAddress!)
+                }
             }
         #endif
     }
