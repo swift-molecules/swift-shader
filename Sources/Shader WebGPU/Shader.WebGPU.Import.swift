@@ -19,4 +19,8 @@
     @_extern(wasm, module: "shader_webgpu", name: "submit")
     @_extern(c)
     func shaderWebGPUSubmit()
+
+    @_extern(wasm, module: "shader_webgpu", name: "read")
+    @_extern(c)
+    func shaderWebGPURead(_ place: Int32, _ count: Int32, _ into: UnsafeMutableRawPointer, _ token: Int32)
 #endif
