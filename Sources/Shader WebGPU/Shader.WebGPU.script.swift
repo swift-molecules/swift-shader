@@ -2,18 +2,20 @@ public import Shader
 
 extension Shader.WebGPU {
     /// The JavaScript that gives a module its `shader_webgpu` imports, as an ES module. A page calls
-    /// `webgpu(device, canvas, exports)` with a `GPUDevice`, a canvas or nil, and a function that gives the module's
-    /// exports once it is made, and passes `.imports` to `WebAssembly.instantiate` under `shader_webgpu`. The canvas is
-    /// configured as opaque `rgba8unorm`, for a kernel that writes a whole frame, such as Picture Shader's `present`; each
-    /// submit writes into the canvas's texture of that frame.
+    /// `webgpu(device, canvas, exports, options)` with a `GPUDevice`, a canvas or nil, and a function that gives the
+    /// module's exports once it is made, and passes `.imports` to `WebAssembly.instantiate` under `shader_webgpu`. The
+    /// canvas is configured as `rgba8unorm`, for a kernel that writes a whole frame, such as Picture Shader's `present`;
+    /// each submit writes into the canvas's texture of that frame. The canvas is opaque unless `options.alpha` is
+    /// `"premultiplied"`: the page then shows through where a pixel's alpha is below one, and the kernel must write
+    /// colours already multiplied by their alpha, as `present` does.
     ///
     /// Submits and reads run in the order the module sends them. One that names a kernel not compiled yet waits for
     /// it, and every one after it waits behind it; `ready()` is the promise that every kernel is compiled.
     public static let script: Swift.String = #"""
-        export function webgpu(device, canvas, exports) {
+        export function webgpu(device, canvas, exports, options = {}) {
           const memory = () => exports().memory;
           const context = canvas ? canvas.getContext("webgpu") : null;
-          if (context) context.configure({ device, format: "rgba8unorm", usage: GPUTextureUsage.STORAGE_BINDING, alphaMode: "opaque" });
+          if (context) context.configure({ device, format: "rgba8unorm", usage: GPUTextureUsage.STORAGE_BINDING, alphaMode: options.alpha === "premultiplied" ? "premultiplied" : "opaque" });
           const pipelines = [];
           let heap = null;
           const image = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE });
