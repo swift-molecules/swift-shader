@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(name: "Shader", targets: ["Shader"]),
         .library(name: "Shader Metal", targets: ["Shader Metal"]),
+        .library(name: "Shader WebGPU", targets: ["Shader WebGPU"]),
     ],
     dependencies: [.package(url: "https://github.com/swift-atoms/swift-numeric.git", branch: "main")],
     targets: [
@@ -22,6 +23,13 @@ let package = Package(
             dependencies: [
                 .target(name: "Shader")
             ]
+        ),
+        .target(
+            name: "Shader WebGPU",
+            dependencies: [
+                .target(name: "Shader")
+            ],
+            swiftSettings: [.enableExperimentalFeature("Extern")]
         ),
         .testTarget(
             name: "Shader Tests",
