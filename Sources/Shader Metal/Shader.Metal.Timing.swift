@@ -10,36 +10,23 @@ extension Shader.Metal {
     /// renderer that is given one sends each kernel in commands of its own and waits for them, so it is for
     /// measuring, not for drawing films.
     public final class Timing: Sendable {
-        private let kept = Mutex<[Swift.String: Entry]>([:])
+        private let kept = Mutex<[Swift.String: Shader.Metal.Timing.Entry]>([:])
 
         public init() {}
     }
 }
 
 extension Shader.Metal.Timing {
-    /// The kernels run under one name: how many times, and the GPU's seconds in all.
-    public struct Entry: Sendable, Hashable {
-        public var name: Swift.String
-        public var count: Int
-        public var seconds: Double
-
-        public init(name: Swift.String, count: Int = 0, seconds: Double = 0) {
-            self.name = name
-            self.count = count
-            self.seconds = seconds
-        }
-    }
-
     /// Counts one run of a kernel that took `seconds` of the GPU.
     public func record(_ name: Swift.String, seconds: Double) {
         kept.withLock { entries in
-            entries[name, default: Entry(name: name)].count += 1
-            entries[name, default: Entry(name: name)].seconds += seconds
+            entries[name, default: Shader.Metal.Timing.Entry(name: name)].count += 1
+            entries[name, default: Shader.Metal.Timing.Entry(name: name)].seconds += seconds
         }
     }
 
     /// Every kernel run, the one that took longest in all first.
-    public var entries: [Entry] {
+    public var entries: [Shader.Metal.Timing.Entry] {
         kept.withLock { $0.values.sorted { $0.seconds > $1.seconds } }
     }
 

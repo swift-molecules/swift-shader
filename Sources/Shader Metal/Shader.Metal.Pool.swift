@@ -31,7 +31,7 @@
 
         /// The size among `sizes` a buffer of `size` is taken from: the smallest that holds it, and no more than
         /// twice its size, so that little of a buffer lies unused.
-        public static func fitting(_ size: Int, among sizes: some Sequence<Int>) -> Int? {
+        public static func fitting(_ size: Int, among sizes: some Swift.Sequence<Int>) -> Int? {
             var best: Int?
             for other in sizes where other >= size && other <= 2 * size && other < best ?? .max { best = other }
             return best

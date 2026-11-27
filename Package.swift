@@ -14,7 +14,8 @@ let package = Package(
             name: "Shader",
             dependencies: [
                 .product(name: "Numeric", package: "swift-numeric")
-            ]
+            ],
+            swiftSettings: [.enableExperimentalFeature("Extern")]
         ),
         .target(
             name: "Shader Metal",
@@ -49,7 +50,6 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
             .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
             .enableUpcomingFeature("InferIsolatedConformances"),
             .enableExperimentalFeature("Lifetimes"),
-            .enableExperimentalFeature("Extern"),
             .treatAllWarnings(as: .error),
         ]
 }

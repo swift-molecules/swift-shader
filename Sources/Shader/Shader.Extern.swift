@@ -1,5 +1,4 @@
 #if SHADER
-    // Free functions: a static one takes its type as a further argument.
     @_extern(wasm, module: "shader", name: "load")
     @_extern(c, "shader_load")
     @usableFromInline
@@ -55,11 +54,6 @@
     @usableFromInline
     internal func surface(_ red: Float, _ green: Float, _ blue: Float, _ alpha: Float, _ column: UInt32, _ row: UInt32)
 
-
-
-
-
-
     @_extern(wasm, module: "shader", name: "load_wide")
     @_extern(c, "shader_load_wide")
     @usableFromInline
@@ -84,16 +78,4 @@
     @_extern(c, "shader_local_store")
     @usableFromInline
     internal func localStore(_ number: Int32, _ index: Int32, _ word: UInt32)
-
-    extension Shader {
-        /// Gives a vector from a function entry.
-        @inlinable
-        @inline(__always)
-        public static func result(_ vector: SIMD4<Float>) {
-            Shader::result(0, vector.x)
-            Shader::result(1, vector.y)
-            Shader::result(2, vector.z)
-            Shader::result(3, vector.w)
-        }
-    }
 #endif
